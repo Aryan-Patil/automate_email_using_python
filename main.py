@@ -45,15 +45,24 @@ with open(file_path, 'r') as file:
 
 file_path = 'user.json'
 with open(file_path, 'r') as file:
-    main_details = json.load(file)
-
-username = main_details['username']
-password = main_details['password']
+    user_data = json.load(file)
 
 count = 0
-for email in emails:
-    body = 'Dear,\n' + file_contents
-    send_email(username, email, subject, body, password)
-    count += 1
-    print(count)
+for user in user_data:
+    username = user['username']
+    password = user['password']
 
+    for email in emails:
+        if count >= 500:
+            break
+
+        body = 'Dear,\n' + file_contents
+        send_email(username, email, subject, body, password)
+        count += 1
+        print(f'Sent email {count} using {username}')
+
+    if count >= 500:
+        count = 0
+        emails = emails[500:]  # Update the emails list to exclude the already sent emails
+    else:
+        break
